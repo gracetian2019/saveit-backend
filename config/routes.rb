@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :collections
       resources :users
+      get '/persist', to:'users#persist'
     end
   end
   post 'api/v1/login', to: 'api/v1/users#login'
