@@ -1,4 +1,6 @@
 class Api::V1::UsersController < ApplicationController
+
+  before_action :authorized, only: [:persist]
     def index
         @users =User.all
 
@@ -7,7 +9,15 @@ class Api::V1::UsersController < ApplicationController
 
     def show
         @user = User.find(params[:id])
-        render json: @user
+        wristband = encode_token({user_id: @user.id})
+
+        render json: {user: UserSerializer.new(@user), token: wristband}
+    end
+
+    def persist
+      wristband = encode_token({user_id: @user.id})
+
+      render json: {user: UserSerializer.new(@user), token: wristband}
     end
 
     def create 
@@ -17,7 +27,8 @@ class Api::V1::UsersController < ApplicationController
     
     
     if @user.valid?
-      render json: @user,status: 201
+      wristband = encode_token({user_id: @user.id})
+      render json: {user: UserSerializer.new(@user), token: wristband}
     else
       render json: {message: "Invalid username"}
     end
@@ -29,7 +40,9 @@ class Api::V1::UsersController < ApplicationController
         @user = User.find_by(username: params[:username])
     
         if @user && @user.authenticate(params[:password])
-          render json: @user
+          wristband = encode_token({user_id: @user.id})
+
+          render json: {user: UserSerializer.new(@user), token: wristband}
         else
           render json: {message: 'Invalid Username Or Password'}
         end

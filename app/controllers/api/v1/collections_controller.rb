@@ -1,4 +1,7 @@
 class Api::V1::CollectionsController < ApplicationController
+    
+    # before_action :authorized, only: [:create, :update]
+
     def index
         @collections = Collection.all 
 
@@ -13,6 +16,7 @@ class Api::V1::CollectionsController < ApplicationController
 
     def create 
         @collection = Collection.create(collection_params)
+        #@collection = @user.collections.create(collection_params)
 
         render json: @collection, status: 200
     end
